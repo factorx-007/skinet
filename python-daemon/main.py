@@ -28,7 +28,7 @@ class PythonDaemon:
         
     def start(self):
         print("[DAEMON] Iniciando Python Daemon...")
-        self.tts.speak("Sistema iniciado. Esperando conexión.")
+        self.tts.speak("Hola, soy Juan. Iniciando sistemas.")
         self.stt.start_listening()
         
         # Run asyncio event loop in main thread
