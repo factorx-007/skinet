@@ -3,15 +3,22 @@ import websockets
 import json
 import datetime
 import threading
-from stt_service import STTService
-from tts_service import TTSService
-from os_controller import OSController
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+from reconocimiento_voz.stt_service import STTService
+from sintesis_voz.tts_service import TTSService
+from control_sistema.os_controller import OSController
+from control_navegador.browser_controller import BrowserController
 
 class PythonDaemon:
     def __init__(self, websocket_url="ws://localhost:8080/jarvis-ws"):
         self.websocket_url = websocket_url
         self.tts = TTSService()
         self.os_ctrl = OSController()
+        self.browser_ctrl = BrowserController()
         
         # Call on_voice_command whenever voice is detected
         self.stt = STTService(callback=self.on_voice_command)
@@ -58,19 +65,66 @@ class PythonDaemon:
         
         if intent == "OPEN_APP":
             success, msg = self.os_ctrl.open_app(target)
-            if tts_message:
-                self.tts.speak(tts_message)
-            elif success:
-                self.tts.speak(f"Abriendo {target}")
-            else:
-                self.tts.speak(msg)
+            self.tts.speak(tts_message if tts_message else msg)
                 
         elif intent == "CLOSE_APP":
             success, msg = self.os_ctrl.close_app(target)
-            if tts_message:
-                self.tts.speak(tts_message)
-            else:
-                self.tts.speak(msg)
+            self.tts.speak(tts_message if tts_message else msg)
+
+        elif intent == "MINIMIZE_APP":
+            success, msg = self.os_ctrl.minimize_app(target)
+            self.tts.speak(tts_message if tts_message else msg)
+
+        elif intent == "MAXIMIZE_APP":
+            success, msg = self.os_ctrl.maximize_app(target)
+            self.tts.speak(tts_message if tts_message else msg)
+
+        elif intent == "BROWSER_SEARCH":
+            success, msg = self.browser_ctrl.search_google(target)
+            self.tts.speak(tts_message if tts_message else msg)
+            
+        elif intent == "YOUTUBE_SEARCH":
+            success, msg = self.browser_ctrl.search_youtube(target)
+            self.tts.speak(tts_message if tts_message else msg)
+            
+        elif intent == "OPEN_WEBSITE":
+            success, msg = self.browser_ctrl.open_website(target)
+            self.tts.speak(tts_message if tts_message else msg)
+
+        elif intent == "VOLUME_UP":
+            success, msg = self.os_ctrl.volume_up()
+            self.tts.speak(tts_message if tts_message else msg)
+
+        elif intent == "VOLUME_DOWN":
+            success, msg = self.os_ctrl.volume_down()
+            self.tts.speak(tts_message if tts_message else msg)
+
+        elif intent == "VOLUME_MUTE":
+            success, msg = self.os_ctrl.volume_mute()
+            self.tts.speak(tts_message if tts_message else msg)
+
+        elif intent == "MEDIA_PLAY_PAUSE":
+            success, msg = self.os_ctrl.media_play_pause()
+            self.tts.speak(tts_message if tts_message else msg)
+
+        elif intent == "MEDIA_NEXT":
+            success, msg = self.os_ctrl.media_next()
+            self.tts.speak(tts_message if tts_message else msg)
+
+        elif intent == "MEDIA_PREV":
+            success, msg = self.os_ctrl.media_prev()
+            self.tts.speak(tts_message if tts_message else msg)
+
+        elif intent == "LOCK_SCREEN":
+            success, msg = self.os_ctrl.lock_screen()
+            self.tts.speak(tts_message if tts_message else msg)
+
+        elif intent == "TAKE_SCREENSHOT":
+            success, msg = self.os_ctrl.take_screenshot()
+            self.tts.speak(tts_message if tts_message else msg)
+            
+        elif intent == "SAY_TEXT":
+            self.tts.speak(tts_message)
                 
         elif intent == "LEARN_ALIAS":
             if tts_message:

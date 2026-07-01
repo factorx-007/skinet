@@ -94,6 +94,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Quick actions
+    const quickBtns = document.querySelectorAll(".quick-btn");
+    quickBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const cmd = btn.getAttribute("data-cmd");
+            if (cmd && socket && socket.readyState === WebSocket.OPEN) {
+                const payload = {
+                    source: "voice",
+                    timestamp: new Date().toISOString(),
+                    raw_text: cmd
+                };
+                socket.send(JSON.stringify(payload));
+            }
+        });
+    });
+
     // Iniciar conexión
     connectWebSocket();
 });

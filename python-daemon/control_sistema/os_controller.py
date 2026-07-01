@@ -2,6 +2,7 @@ import subprocess
 import psutil
 import pygetwindow as gw
 import os
+import pyautogui
 
 class OSController:
     def __init__(self):
@@ -18,7 +19,17 @@ class OSController:
             "explorador": "explorer.exe",
             "explorador de archivos": "explorer.exe",
             "archivos": "explorer.exe",
-            "spotify": "spotify.exe"
+            "spotify": "spotify.exe",
+            "word": "winword.exe",
+            "excel": "excel.exe",
+            "powerpoint": "powerpnt.exe",
+            "paint": "mspaint.exe",
+            "consola": "cmd.exe",
+            "cmd": "cmd.exe",
+            "terminal": "cmd.exe",
+            "edge": "msedge.exe",
+            "configuración": "ms-settings:",
+            "discord": "C:\\Users\\Acer\\AppData\\Local\\Discord\\Update.exe --processStart Discord.exe"
         }
 
     def _clean_name(self, name):
@@ -35,7 +46,11 @@ class OSController:
         try:
             print(f"[OS] Abriendo {target_exe}...")
             # En Windows, usar start para que busque en el PATH
-            subprocess.Popen(f"start {target_exe}", shell=True)
+            # Las comillas dobles vacías son necesarias para que start no confunda la ruta con un título de ventana si tiene espacios
+            if target_exe.startswith("ms-settings:"):
+                subprocess.Popen(f"start {target_exe}", shell=True)
+            else:
+                subprocess.Popen(f'start "" "{target_exe}"', shell=True)
             return True, f"Abriendo {app_name_or_alias}"
         except Exception as e:
             print(f"[OS] Error abriendo {target_exe}: {e}")
@@ -85,6 +100,41 @@ class OSController:
             window.maximize()
             return True, f"Maximizando {app_name_or_alias}"
         return False, f"No encontré la ventana de {app_name_or_alias}"
+
+    # Nuevas funciones de control del sistema
+    def volume_up(self):
+        for _ in range(5):
+            pyautogui.press("volumeup")
+        return True, "Subiendo el volumen."
+
+    def volume_down(self):
+        for _ in range(5):
+            pyautogui.press("volumedown")
+        return True, "Bajando el volumen."
+
+    def volume_mute(self):
+        pyautogui.press("volumemute")
+        return True, "Volumen silenciado."
+
+    def media_play_pause(self):
+        pyautogui.press("playpause")
+        return True, "Reproduciendo o pausando multimedia."
+
+    def media_next(self):
+        pyautogui.press("nexttrack")
+        return True, "Siguiente pista."
+
+    def media_prev(self):
+        pyautogui.press("prevtrack")
+        return True, "Pista anterior."
+
+    def lock_screen(self):
+        os.system("rundll32.exe user32.dll,LockWorkStation")
+        return True, "Bloqueando la pantalla."
+
+    def take_screenshot(self):
+        pyautogui.screenshot("captura_jarvis.png")
+        return True, "Captura de pantalla guardada como captura_jarvis.png"
 
 if __name__ == "__main__":
     import time

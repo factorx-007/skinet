@@ -3,8 +3,8 @@ package com.jarvis.core.websocket;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.jarvis.core.nlp.NLPService;
-import com.jarvis.core.service.LearningService;
+import com.jarvis.core.procesamiento_nlp.ProcesamientoLenguajeService;
+import com.jarvis.core.memoria_personalizacion.LearningService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -20,10 +20,10 @@ public class JarvisWebSocketHandler extends TextWebSocketHandler {
 
     private final Set<WebSocketSession> sessions = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final NLPService nlpService;
+    private final ProcesamientoLenguajeService nlpService;
     private final LearningService learningService;
 
-    public JarvisWebSocketHandler(NLPService nlpService, LearningService learningService) {
+    public JarvisWebSocketHandler(ProcesamientoLenguajeService nlpService, LearningService learningService) {
         this.nlpService = nlpService;
         this.learningService = learningService;
     }
@@ -51,21 +51,17 @@ public class JarvisWebSocketHandler extends TextWebSocketHandler {
             String rawText = jsonNode.get("raw_text").asText();
             
             // 1. NLP
-            NLPService.IntentResult nlpResult = nlpService.parseIntent(rawText);
+            ProcesamientoLenguajeService.IntentResult nlpResult = nlpService.parseIntent(rawText);
             
             String target = nlpResult.target();
             String intent = nlpResult.intent();
-            String ttsMessage = null;
+            String ttsMessage = nlpResult.ttsMessage();
 
             // 2. Learning/Alias Resolution
             if ("LEARN_ALIAS".equals(intent)) {
                 learningService.learnAlias(target);
-                ttsMessage = "Alias aprendido correctamente.";
-            } else if (!"UNKNOWN".equals(intent)) {
+            } else if (!"UNKNOWN_APP".equals(intent)) {
                 target = learningService.resolveTarget(target);
-            } else {
-                intent = "UNKNOWN_APP";
-                ttsMessage = "No te he entendido, por favor repite.";
             }
 
             // 3. Responder al Python Daemon

@@ -1,4 +1,4 @@
-package com.jarvis.core.service;
+package com.jarvis.core.memoria_personalizacion;
 
 import com.jarvis.core.model.ComandoAlias;
 import com.jarvis.core.model.HistorialInteraccion;
@@ -27,7 +27,6 @@ public class LearningService {
     }
     
     public void learnAlias(String textToLearn) {
-        // Formato esperado: "aprende [alias] como [target]"
         if (textToLearn.contains(" como ")) {
             String[] parts = textToLearn.split(" como ");
             if (parts.length == 2) {

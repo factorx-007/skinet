@@ -3,42 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jarvis - Asistente Virtual</title>
-    <meta name="description" content="Dashboard de control y monitoreo del asistente virtual Jarvis">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <title>Juan - Sistema Operativo Central</title>
+    <meta name="description" content="Dashboard de control y monitoreo del asistente virtual Juan">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>🤖 Jarvis Dashboard</h1>
+        <h1>🤖 Juan Core</h1>
         <div class="status-badge" id="ws-status">
             <span class="status-dot"></span>
-            <span id="ws-text">Conectando...</span>
+            <span id="ws-text">Inicializando...</span>
         </div>
     </header>
 
     <main>
         <section id="terminal-section">
-            <h2>📜 Historial de Interacciones</h2>
+            <h2>📜 Registro de Sistema</h2>
             <div class="terminal-log" id="terminal-log">
                 <!-- Los logs aparecerán aquí -->
                 <div class="log-entry">
-                    <span class="log-time">Sistema</span>
-                    <span class="log-text">Esperando interacciones de voz...</span>
+                    <span class="log-time">[Sistema]</span>
+                    <span class="log-text">Esperando interacciones de voz y carga de módulos...</span>
                 </div>
             </div>
         </section>
 
         <section id="app-manager" class="app-manager">
-            <h2>⚙️ Configuración (Test)</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
-                Envía un comando manual al sistema emulando la voz.
+            <h2>⚙️ Control Manual</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.95rem; line-height: 1.4;">
+                Emula un comando de voz introduciendo texto directamente en el canal seguro.
             </p>
             <div class="input-group">
-                <label for="mock-voice">Comando de voz manual</label>
-                <input type="text" id="mock-voice" placeholder="Ej. abre la calculadora">
+                <label for="mock-voice">Input de Comando</label>
+                <input type="text" id="mock-voice" placeholder="Ej. busca en google IA">
             </div>
-            <button id="btn-send">Enviar Comando</button>
+            <button id="btn-send">Transmitir Orden</button>
+
+            <div style="margin-top: 2rem;">
+                <h3 style="color: var(--accent-color); font-size: 1rem; margin-bottom: 1rem; text-transform: uppercase;">⚡ Acciones Rápidas</h3>
+                <div class="quick-actions">
+                    <button class="quick-btn" data-cmd="abre google">🌐 Google</button>
+                    <button class="quick-btn" data-cmd="busca en youtube musica">🎵 YouTube</button>
+                    <button class="quick-btn" data-cmd="sube el volumen">🔊 Vol +</button>
+                    <button class="quick-btn" data-cmd="baja el volumen">🔉 Vol -</button>
+                    <button class="quick-btn" data-cmd="reproduce">⏯️ Play/Pausa</button>
+                    <button class="quick-btn" data-cmd="que hora es">🕒 Hora</button>
+                    <button class="quick-btn" data-cmd="bloquea la pantalla">🔒 Bloquear</button>
+                    <button class="quick-btn" data-cmd="captura de pantalla">📸 Captura</button>
+                </div>
+            </div>
         </section>
     </main>
 

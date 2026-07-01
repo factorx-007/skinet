@@ -40,6 +40,31 @@ class BrowserController:
             print(f"[BROWSER] Error al buscar: {e}")
             return False, f"Error al buscar en Google."
 
+    def search_youtube(self, query):
+        try:
+            self.ensure_browser_open()
+            print(f"[BROWSER] Buscando en YouTube: {query}")
+            self.page.goto(f"https://www.youtube.com/results?search_query={query.replace(' ', '+')}")
+            # wait a bit for elements
+            self.page.wait_for_load_state("domcontentloaded")
+            return True, f"Buscando {query} en YouTube."
+        except Exception as e:
+            print(f"[BROWSER] Error al buscar en YouTube: {e}")
+            return False, f"Error al buscar en YouTube."
+
+    def open_website(self, domain):
+        try:
+            self.ensure_browser_open()
+            print(f"[BROWSER] Abriendo web: {domain}")
+            if not domain.endswith(".com") and not domain.endswith(".org") and not domain.endswith(".es"):
+                domain += ".com"
+            self.page.goto(f"https://www.{domain}")
+            self.page.wait_for_load_state("domcontentloaded")
+            return True, f"Abriendo la página de {domain}."
+        except Exception as e:
+            print(f"[BROWSER] Error al abrir {domain}: {e}")
+            return False, f"Error al abrir la web."
+
     def close_browser(self):
         if self.browser:
             self.browser.close()

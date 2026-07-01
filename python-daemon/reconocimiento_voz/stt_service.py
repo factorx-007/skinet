@@ -3,9 +3,9 @@ import threading
 import time
 
 class STTService:
-    def __init__(self, wake_word="hola sistema", callback=None):
+    def __init__(self, wake_words=["juan"], callback=None):
         self.recognizer = sr.Recognizer()
-        self.wake_word = wake_word.lower()
+        self.wake_words = [w.lower() for w in wake_words]
         self.callback = callback
         self.is_listening = False
         self.microphone = sr.Microphone()
@@ -25,8 +25,8 @@ class STTService:
         self.is_listening = False
 
     def _listen_loop(self):
-        print(f"[STT] Escuchando activamente. Wake word necesario: '{self.wake_word}'")
-        print("[STT] Di primero 'hola sistema' y luego tu comando (ej: 'hola sistema abre la calculadora').")
+        print(f"[STT] Escuchando activamente. Wake words permitidas: {self.wake_words}")
+        print("[STT] Di primero 'juan' y luego tu comando (ej: 'juan abre la calculadora').")
         while self.is_listening:
             with self.microphone as source:
                 try:
@@ -38,21 +38,24 @@ class STTService:
                     text = self.recognizer.recognize_google(audio, language="es-ES").lower()
                     print(f"[STT] Escuchado: '{text}'")
                     
-                    if self.wake_word in text:
+                    detected_word = next((w for w in self.wake_words if w in text), None)
+                    if detected_word:
                         # Extraer comando después del wake word
-                        command = text.split(self.wake_word)[-1].strip()
+                        command = text.split(detected_word, 1)[-1].strip()
                         if command and self.callback:
                             self.callback(command)
                         elif not command and self.callback:
                             print("[STT] Wake word detectado. Escuchando comando inmediatamente...")
-                            # Escuchar el comando inmediatamente después
-                            audio_cmd = self.recognizer.listen(source, timeout=3, phrase_time_limit=5)
-                            print("[STT] Procesando comando de voz...")
-                            cmd_text = self.recognizer.recognize_google(audio_cmd, language="es-ES").lower()
-                            print(f"[STT] Comando detectado: '{cmd_text}'")
-                            self.callback(cmd_text)
+                            try:
+                                audio_cmd = self.recognizer.listen(source, timeout=3, phrase_time_limit=5)
+                                print("[STT] Procesando comando de voz...")
+                                cmd_text = self.recognizer.recognize_google(audio_cmd, language="es-ES").lower()
+                                print(f"[STT] Comando detectado: '{cmd_text}'")
+                                self.callback(cmd_text)
+                            except:
+                                print("[STT] No se detectó comando después del wake word.")
                     else:
-                        print(f"[STT] Se escuchó '{text}', pero no contiene la palabra clave '{self.wake_word}'. Ignorando.")
+                        print(f"[STT] Se escuchó '{text}', pero no contiene ninguna palabra clave de activación. Ignorando.")
                             
                 except sr.WaitTimeoutError:
                     # Timeout normal sin habla, no mostramos error para no inundar la consola
